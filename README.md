@@ -2,7 +2,7 @@
   未来完整的项目会是 前端 `vue` 后端:`python` + `django` 和 `go` + `gin`
   后端两种语言功能相同
 - [展示地址]() 
-- [前端地址]() 
+- [前端地址](https://github.com/wangyue369/alarmPlatformVue) 
 - [后端 go 地址]()
 ## 目的
 写这个平台的主要目的：
