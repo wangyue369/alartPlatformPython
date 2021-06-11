@@ -1,2 +1,1 @@
 from .AlarmChannelForm import AlarmChannelForm
-from .AlarmChannelUpdateForm import AlarmChannelUpdateForm

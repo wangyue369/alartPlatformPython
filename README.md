@@ -3,7 +3,7 @@
   后端两种语言功能相同
 - [展示地址]() 
 - [前端地址](https://github.com/wangyue369/alarmPlatformVue) 
-- [后端 go 地址]()
+- [后端 go 地址](https://github.com/wangyue369/alartPlatformGo)
 ## 目的
 写这个平台的主要目的：
 - 写一个告警平台实现告警统一入口，方便汇总告警渠道、告警记录并做一些简单的告警历史数据分析。

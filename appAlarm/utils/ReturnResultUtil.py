@@ -5,7 +5,17 @@ from django.http import HttpResponse
 
 
 class ReturnResultUtil:
-    def result(self, is_success: bool = True, message: str = None, data = None):
+    is_success = True
+    message = None
+    data = None
+
+    def success(self):
+        return self.is_success
+
+    def result(self, is_success: bool = True, message: str = None, data=None):
+        self.is_success = is_success
+        self.message = message
+        self.data = data
         result = {
             "status": is_success,
             "message": message,
@@ -13,7 +23,7 @@ class ReturnResultUtil:
         }
         return result
 
-    def http_result(self, status: int = 200, message: str = None, data = None ):
+    def http_result(self, status: int = 200, message: str = None, data=None):
         result = {
             "status": status,
             "message": message,
@@ -22,9 +32,9 @@ class ReturnResultUtil:
         try:
             result = json.dumps(result)
         except TypeError as e:
-            result = json.dumps(result,cls=DateEncoder)
-            print(result)
+            result = json.dumps(result, cls=DateEncoder)
         return HttpResponse(result)
+
 
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):

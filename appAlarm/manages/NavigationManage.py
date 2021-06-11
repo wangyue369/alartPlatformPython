@@ -1,8 +1,11 @@
 import json
+import logging
 
 from appAlarm.utils import return_result
 from appAlarm.models import NavigationModel, NavigationLevelTwoModel
 from django.core import serializers
+
+logger = logging.getLogger('django')
 
 
 class NavigationManage:
@@ -15,13 +18,14 @@ class NavigationManage:
             for i in all_data:
                 tmp_dict = {}
                 level_two_data = json.loads(serializers.serialize("json",
-                                                                  NavigationLevelTwoModel.objects.filter(level_one_name=i["fields"][
-                                                                      "level_one_name"]).order_by("id")))
+                                                                  NavigationLevelTwoModel.objects.filter(
+                                                                      level_one_name=i["fields"][
+                                                                          "level_one_name"]).order_by("id")))
                 tmp_dict["pk"] = i["pk"]
                 tmp_dict["name"] = i["fields"]["level_one_name"]
                 tmp_dict["childs"] = level_two_data
                 data.append(tmp_dict)
         except Exception as e:
-            print(e)
+            logger.error("查询菜单栏结果失败，原因：{message}".format(message=e))
             return return_result.result(False, message="查询结果失败")
-        return return_result.result(True, data = data)
+        return return_result.result(True, data=data)
