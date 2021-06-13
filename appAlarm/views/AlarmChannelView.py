@@ -38,7 +38,9 @@ class CreateAlarmView(FormView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        print(111)
         if form.is_valid():
+            print(222)
             channel_id = "c-" + generate_id()
             now_time = datetime.now()
             form.cleaned_data["channel_id"] = channel_id
@@ -48,7 +50,7 @@ class CreateAlarmView(FormView):
             form.cleaned_data["update_user"] = "admin"
             result = alarm_channel_manage.create_alarm_channel(**form.cleaned_data)
         else:
-            return return_result.http_result(500, message=form.errors.as_json())
+            return return_result.http_result(500, message="创建失败，请检查名称、地址是否重复！")
         status = 200 if result.get("status") else 500
         return return_result.http_result(status, message=result.get("message"))
 
