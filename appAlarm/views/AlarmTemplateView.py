@@ -1,23 +1,25 @@
 import json
 
 from datetime import datetime
-from appAlarm.forms import AlarmChannelForm
-from appAlarm.manages import alarm_channel_manage
+from appAlarm.forms import AlarmTemplateForm
+from appAlarm.manages import template_manage
 from django.views.generic import ListView, FormView
-from appAlarm.utils import generate_id, generate_url
+from appAlarm.utils import generate_id
 from appAlarm.utils import return_result
 from django.core.paginator import Paginator
 
-
-class GetAlarmChannelView(ListView):
+class GetTemplateView(ListView):
     http_method_names = ["get"]
 
     def get(self, request, *args, **kwargs):
         parm = self.request.GET.dict()
-        if len(parm) == 0:
-            return return_result.http_result(400, message="缺少参数，请检查请求参数！")
-
-        data = alarm_channel_manage.get_alarm_channel_by_parm(parm.get("channel_type"), parm.get("search", " "))
+        if parm.get("template_type") is not None:
+            data = template_manage.get_template_by_type(parm.get("template_type"))
+            parm["pagesize"] = 1000
+            parm["pagenum"] = 1
+            print(data)
+        else:
+            data = template_manage.get_template_by_parm(parm.get("search", " "))
         if data.get("status"):
             paginator = Paginator(data.get("data"), parm.get("pagesize", 10))
             page_obj = paginator.get_page(parm.get("pagenum", 1))
@@ -30,31 +32,27 @@ class GetAlarmChannelView(ListView):
         else:
             return return_result.http_result(500, message=data.get("message"))
 
-
-class CreateAlarmView(FormView):
-    form_class = AlarmChannelForm
+class CreateTemplateView(FormView):
+    form_class = AlarmTemplateForm
     http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
+        form =self.get_form()
         if form.is_valid():
-            channel_id = generate_id()
-            channel_webhook = generate_url(channel_id)
+            template_id = generate_id()
             now_time = datetime.now()
-            form.cleaned_data["channel_id"] = channel_id
+            form.cleaned_data["template_id"] = template_id
             form.cleaned_data["create_time"] = now_time
             form.cleaned_data["update_time"] = now_time
             form.cleaned_data["create_user"] = "admin"
             form.cleaned_data["update_user"] = "admin"
-            form.cleaned_data["channel_webhook"] = channel_webhook
-            result = alarm_channel_manage.create_alarm_channel(**form.cleaned_data)
+            result = template_manage.create_alarm_template(**form.cleaned_data)
         else:
-            return return_result.http_result(500, message="创建失败，请检查名称、地址是否重复！")
+            return return_result.http_result(500, message="创建失败，请检查名称!")
         status = 200 if result.get("status") else 500
         return return_result.http_result(status, message=result.get("message"))
 
-
-class UpdateAlarmView(FormView):
+class UpdateTemplateView(FormView):
     http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
@@ -62,20 +60,21 @@ class UpdateAlarmView(FormView):
         data = json.loads(self.request.body)
         data["update_time"] = datetime.now()
         data["update_user"] = "admin"
-        result = alarm_channel_manage.channel_update(**data)
+        print(data)
+        result = template_manage.update_template(**data)
         status = 200 if result.get("status") else 500
         return return_result.http_result(status, message=result.get("message"))
 
 
-class DeleteAlarmChannelByIdView(FormView):
+class DeleteAlarmTemplateByIdView(FormView):
     http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
         parm = json.loads(self.request.body)
-        channel_id = parm.get("channel_id", None)
-        if channel_id is None:
+        template_id = parm.get("template_id", None)
+        if template_id is None:
             return return_result.http_result(400, message="缺少参数（）")
-        result_delete = alarm_channel_manage.channel_delete(channel_id)
+        result_delete = template_manage.template_delete(template_id)
 
         if result_delete.get("status"):
             return return_result.http_result(200, result_delete.get("message"))

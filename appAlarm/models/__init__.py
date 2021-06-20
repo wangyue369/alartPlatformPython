@@ -1,2 +1,3 @@
 from .AlarmChannelModel import AlarmChannel
 from .NavigationModel import NavigationModel, NavigationLevelTwoModel
+from .AlarmTemplateModel import AlarmTemplate

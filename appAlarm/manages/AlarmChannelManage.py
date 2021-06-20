@@ -10,7 +10,7 @@ logger = logging.getLogger('django')
 
 
 class AlarmChannelManage:
-    def create_alarm_channel(self, channel_id: str, channel_type: str, channel_name: str, channel_access: str,
+    def create_alarm_channel(self, channel_id: str, channel_type: str, channel_name: str, channel_access: str, channel_webhook, template_name:str,
                              create_time: datetime = None, update_time: datetime = None, create_user: str = "admin",
                              update_user: str = "admin", is_active: bool = True):
 
@@ -19,8 +19,8 @@ class AlarmChannelManage:
                 "name or access repeat! name: {name}, access：{access}".format(name=channel_name, access=channel_access))
             return return_result.result(False, message="name or access repeat！")
         try:
-            AlarmChannel.objects.create(channel_id=channel_id, channel_type=channel_type, channel_name=channel_name,
-                                        channel_access=channel_access, create_time=create_time, update_time=update_time,
+            AlarmChannel.objects.create(channel_id=channel_id, channel_type=channel_type, channel_name=channel_name, template_name=template_name,
+                                        channel_access=channel_access, channel_webhook=channel_webhook,create_time=create_time, update_time=update_time,
                                         create_user=create_user, update_user=update_user, is_active=is_active)
             return return_result.result(True, message="创建成功！")
         except Exception as e:
@@ -56,7 +56,7 @@ class AlarmChannelManage:
     def channel_id_exist(self, channel_id: str):
         return AlarmChannel.objects.filter(channel_id=channel_id).values() != 0
 
-    def channel_update(self, channel_id: str, channel_name: str, channel_access: str,
+    def channel_update(self, channel_id: str, channel_name: str, channel_access: str, template_name: str,
                        is_active: bool = True, update_time: datetime = None, update_user: str = "admin"):
         if not self.channel_id_exist(channel_id):
             return return_result.result(False, message="无此记录！")
@@ -65,7 +65,7 @@ class AlarmChannelManage:
             return return_result.result(False, message="渠道名称或渠道地址重复！")
         try:
             AlarmChannel.objects.filter(channel_id=channel_id).update(
-                channel_access=channel_access, channel_name=channel_name,
+                channel_access=channel_access, channel_name=channel_name, template_name = template_name,
                 is_active=is_active, update_user=update_user, update_time=update_time)
             return return_result.result(True, message="修改成功！")
         except Exception as e:
