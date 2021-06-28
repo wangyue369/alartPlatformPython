@@ -62,8 +62,8 @@ class AlarmTemplateManage:
         if not self.template_id_exist(template_id):
             return return_result.result(False, message="无此记录！")
 
-        if self.template_name_exist(template_name):
-            return return_result.result(False, message="模板名称重复！")
+        # if self.template_name_exist(template_name):
+        #     return return_result.result(False, message="模板名称重复！")
 
         try:
             AlarmTemplate.objects.filter(template_id=template_id).update(
@@ -86,3 +86,11 @@ class AlarmTemplateManage:
             return return_result.result(False, message="删除失败！")
 
         return return_result.result(True, message="删除成功！")
+
+    def get_template_by_name(self, template_name: str):
+        try:
+            template_content = AlarmTemplate.objects.filter(template_name=template_name).values("template_content")[0]["template_content"]
+        except Exception as e:
+            logger.error("get message failure: {ex}".format(ex=e))
+            return return_result.result(False, message="获取数据失败！")
+        return return_result.result(True, data=template_content)

@@ -49,6 +49,7 @@ class CreateAlarmView(FormView):
             form.cleaned_data["channel_webhook"] = channel_webhook
             result = alarm_channel_manage.create_alarm_channel(**form.cleaned_data)
         else:
+            print(form.cleaned_data)
             return return_result.http_result(500, message="创建失败，请检查名称、地址是否重复！")
         status = 200 if result.get("status") else 500
         return return_result.http_result(status, message=result.get("message"))

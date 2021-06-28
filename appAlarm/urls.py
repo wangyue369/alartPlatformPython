@@ -15,7 +15,7 @@ urlpatterns = [
     # template
 
     path('alarmTemplate/get.json', views.GetTemplateView.as_view()),
-    path('alarmTemplate/create.json', views.CreateAlarmView.as_view()),
+    path('alarmTemplate/create.json', views.CreateTemplateView.as_view()),
     path('alarmTemplate/update.json', views.UpdateTemplateView.as_view()),
     path('alarmTemplate/delete.json', views.DeleteAlarmTemplateByIdView.as_view()),
 ]

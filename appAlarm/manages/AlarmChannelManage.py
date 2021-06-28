@@ -10,7 +10,8 @@ logger = logging.getLogger('django')
 
 
 class AlarmChannelManage:
-    def create_alarm_channel(self, channel_id: str, channel_type: str, channel_name: str, channel_access: str, channel_webhook, template_name:str,
+    def create_alarm_channel(self, channel_id: str, channel_type: str, channel_name: str, channel_access: str,
+                             channel_webhook, template_name: str,
                              create_time: datetime = None, update_time: datetime = None, create_user: str = "admin",
                              update_user: str = "admin", is_active: bool = True):
 
@@ -19,8 +20,10 @@ class AlarmChannelManage:
                 "name or access repeat! name: {name}, access：{access}".format(name=channel_name, access=channel_access))
             return return_result.result(False, message="name or access repeat！")
         try:
-            AlarmChannel.objects.create(channel_id=channel_id, channel_type=channel_type, channel_name=channel_name, template_name=template_name,
-                                        channel_access=channel_access, channel_webhook=channel_webhook,create_time=create_time, update_time=update_time,
+            AlarmChannel.objects.create(channel_id=channel_id, channel_type=channel_type, channel_name=channel_name,
+                                        template_name=template_name,
+                                        channel_access=channel_access, channel_webhook=channel_webhook,
+                                        create_time=create_time, update_time=update_time,
                                         create_user=create_user, update_user=update_user, is_active=is_active)
             return return_result.result(True, message="创建成功！")
         except Exception as e:
@@ -31,6 +34,12 @@ class AlarmChannelManage:
     def get_alarm_channel_all(self):
         all_alarm_channels = serializers.serialize("json", AlarmChannel.objects.all())
         return all_alarm_channels
+
+    def get_alarm_channel_by_id(self, channel_id: str):
+        if self.channel_id_exist(channel_id):
+            template_name = AlarmChannel.objects.filter(channel_id=channel_id).values("template_name", "channel_access")[0]
+            return return_result.result(True, data=template_name)
+        return return_result.result(False, message="无此记录：{}".format(channel_id))
 
     def get_alarm_channel_by_parm(self, channel_type: str, channel_name: str = " "):
         try:
@@ -51,6 +60,7 @@ class AlarmChannelManage:
             return AlarmChannel.objects.filter(Q(channel_name=channel_name) | Q(channel_access=channel_access)).exists()
         else:
             return AlarmChannel.objects.filter(
+
                 ~Q(channel_id=channel_id) & (Q(channel_name=channel_name) | Q(channel_access=channel_access))).exists()
 
     def channel_id_exist(self, channel_id: str):
@@ -65,7 +75,7 @@ class AlarmChannelManage:
             return return_result.result(False, message="渠道名称或渠道地址重复！")
         try:
             AlarmChannel.objects.filter(channel_id=channel_id).update(
-                channel_access=channel_access, channel_name=channel_name, template_name = template_name,
+                channel_access=channel_access, channel_name=channel_name, template_name=template_name,
                 is_active=is_active, update_user=update_user, update_time=update_time)
             return return_result.result(True, message="修改成功！")
         except Exception as e:
