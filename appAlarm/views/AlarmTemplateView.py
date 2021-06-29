@@ -13,11 +13,15 @@ class GetTemplateView(ListView):
 
     def get(self, request, *args, **kwargs):
         parm = self.request.GET.dict()
-        if parm.get("template_type") is not None:
-            data = template_manage.get_template_by_type(parm.get("template_type"))
+        if parm.get("channel_type") is not None:
+            data = template_manage.get_template_by_type(parm.get("channel_type"))
             parm["pagesize"] = 1000
             parm["pagenum"] = 1
             print(data)
+            if data.get("status"):
+                return return_result.http_result(200, data=data.get("data"))
+            else:
+                return_result.http_result(500, message=data.get("message"))
         else:
             data = template_manage.get_template_by_parm(parm.get("search", " "))
         if data.get("status"):
