@@ -42,7 +42,7 @@ class AlarmTemplateManage:
             return return_result.result(False, message="获取数据失败！")
         return return_result.result(True, data=data)
 
-    def create_alarm_template(self, template_id: str, template_name: str, template_type: str, channel_type:str, template_content: str,
+    def create_alarm_template(self, template_id: str, template_name: str, template_type: str, channel_type:str, template_content: str, notify_type:str,
                               create_time: datetime = None, update_time: datetime = None, create_user: str = "admin",
                               update_user: str = "admin"):
         if self.template_name_exist(template_name):
@@ -52,7 +52,7 @@ class AlarmTemplateManage:
             AlarmTemplate.objects.create(template_id=template_id, template_name=template_name,channel_type=channel_type,
                                          template_type=template_type, template_content=template_content,
                                          create_time=create_time, update_time=update_time, create_user=create_user,
-                                         update_user=update_user)
+                                         update_user=update_user, notify_type=notify_type)
             return return_result.result(True, message="创建成功！")
         except Exception as e:
             logging.error("create template failure: {ex}".format(ex=e))
@@ -64,7 +64,7 @@ class AlarmTemplateManage:
     def template_id_exist(self, template_id: str):
         return AlarmTemplate.objects.filter(template_id=template_id).values() != 0
 
-    def update_template(self, template_id: str, template_name: str, template_content: str, update_time: datetime = None,
+    def update_template(self, template_id: str, template_name: str, template_content: str, notify_type:str, update_time: datetime = None,
                         update_user: str = "admin"):
         if not self.template_id_exist(template_id):
             return return_result.result(False, message="无此记录！")
@@ -75,7 +75,7 @@ class AlarmTemplateManage:
         try:
             AlarmTemplate.objects.filter(template_id=template_id).update(
                 template_name=template_name, template_content=template_content,
-                update_user=update_user, update_time=update_time
+                update_user=update_user, update_time=update_time, notify_type=notify_type
             )
             return return_result.result(True, message="修改成功！")
         except Exception as e:

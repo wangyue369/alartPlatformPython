@@ -29,3 +29,7 @@ ALTER TABLE `appAlarm_alarmtemplate` ALTER COLUMN `channel_type` DROP DEFAULT;
 --
 -- Alter field template_type on alarmtemplate
 --
+-- Add field notify_type to alarmtemplate
+--
+ALTER TABLE `appAlarm_alarmtemplate` ADD COLUMN `notify_type` varchar(5000) DEFAULT 'markdown' NOT NULL;
+ALTER TABLE `appAlarm_alarmtemplate` ALTER COLUMN `notify_type` DROP DEFAULT;

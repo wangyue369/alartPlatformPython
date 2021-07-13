@@ -17,7 +17,6 @@ class GetTemplateView(ListView):
             data = template_manage.get_template_by_type(parm.get("channel_type"))
             parm["pagesize"] = 1000
             parm["pagenum"] = 1
-            print(data)
             if data.get("status"):
                 return return_result.http_result(200, data=data.get("data"))
             else:
